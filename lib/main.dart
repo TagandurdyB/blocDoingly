@@ -1,3 +1,4 @@
+import 'package:doingly/logic/cubit/internet_cubit.dart';
 import 'package:doingly/logic/cubit/theme_cubit.dart';
 import 'package:doingly/presentation/routes/app_route.dart';
 import 'package:flutter/material.dart';
@@ -17,23 +18,19 @@ void main() async {
   runApp(const Injector(MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-//   @override
-//   State<MyApp> createState() => _MyAppState();
-// }
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
-// class _MyAppState extends State<MyApp> {
-  // @override
-  // void initState() {
-  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-  //     final providerT = ThemeP.of(context, listen: false);
-  //     providerT.getIsSystem;
-  //     providerT.getIsLight;
-  //   });
-  //   super.initState();
-  // }
+class _MyAppState extends State<MyApp> {
+  @override
+  void dispose() {
+    BlocProvider.of<InternetCubit>(context).close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

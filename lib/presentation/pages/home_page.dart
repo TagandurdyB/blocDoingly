@@ -1,12 +1,20 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:doingly/logic/bloc/list_bloc.dart';
+import 'package:doingly/logic/bloc/task_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
+import '../../config/services/keyboard.dart';
+import '../../config/tags.dart';
 import '../routes/rout.dart';
 import '../scaffold/custom_drawer.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/ReadyInput/ready_input_base.dart';
+import '../widgets/list_card.dart';
+import '../widgets/my_pop_widget.dart';
+import 'task_page.dart';
 
 // import '../widgets/list_card.dart';
 
@@ -23,14 +31,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   // context.read<ListBloc>().add(ReadList());
-    //   BlocProvider.of<ListBloc>(context, listen: false).add(ReadList());
-    //   // listDo = ListP.of(context, listen: false);
-    //   // listDo.fillLists();
-    // });
-      BlocProvider.of<ListBloc>(context, listen: false).add(ReadList());
-  
+
+    context.read<ListBloc>().readList();
   }
 
   @override
@@ -52,62 +54,78 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _logOut() {
-    // final userDo = UserP.of(context, listen: false);
-    // userDo.saveStr(Tags.hiveToken, null);
-    // userDo.saveBool(Tags.hiveIsLogin, false);
+    final myBase = Hive.box(Tags.hiveBase);
+    myBase.put(Tags.hiveToken, null);
+    myBase.put(Tags.hiveIsLogin, false);
     Navigator.pushNamedAndRemoveUntil(context, Rout.login, (route) => false);
   }
 
   void _addList() {
-    // MyPopUpp.popInput(
-    //   context,
-    //   "Add List",
-    //   "Add",
-    //   onTap: () {
-    //     Keyboard.close(context);
-    //     MyPopUpp.popLoading(context);
-    //     listDo.create(RIBase.getText(Tags.rIPop)).then((response) {
-    //       listDo.fillLists();
-    //       MyPopUpp.popMessage(
-    //           context, null, response.message, !response.status);
-    //     });
-    //   },
-    //   hidden: "New List name",
-    //   label: "New List name",
-    // );
+    MyPopUpp.popInput(
+      context,
+      "Add List",
+      "Add",
+      onTap: () {
+        Keyboard.close(context);
+        MyPopUpp.popLoading(context);
+        context
+            .read<ListBloc>()
+            .addList(AddList(name: RIBase.getText(Tags.rIPop)))
+            .then((response) => MyPopUpp.popMessage(
+                context, null, response.message, !response.status));
+      },
+      hidden: "New List name",
+      label: "New List name",
+    );
   }
 
   Widget buildContent() {
-    // final lists = listP.lists;
-    return 
-    // lists != null
-    //     ? RefreshIndicator(
-    //         color: Colors.orange,
-    //         onRefresh: _refresh,
-    //         child: ListView.builder(
-    //           itemCount: lists.length+1,
-    //           itemBuilder: (context, index) {
-    //             if (index < lists.length) {
-    //               return ListCard(
-    //                 obj: lists[index],
-    //                 onTab: () {
-    //                   // Navigator.push(
-    //                   //     context,
-    //                   //     MaterialPageRoute(
-    //                   //         builder: (context) =>
-    //                   //             TaskPage(listObj: lists[index])));
-    //                 },
-    //               );
-    //             } else {
-    //               return const SizedBox(height: 80);
-    //             }
-    //           },
-    //         ),
-    //       )
-    //     : 
-        const Center(child: CircularProgressIndicator(color: Colors.orange));
+    return BlocBuilder<ListBloc, ListState>(builder: (context, state) {
+      if (state is ListUpdate) {
+        final lists = state.lists;
+        if (lists.isNotEmpty) {
+          return RefreshIndicator(
+            color: Colors.orange,
+            onRefresh: _refresh,
+            child: ListView.builder(
+              itemCount: lists.length + 1,
+              itemBuilder: (context, index) {
+                if (index < lists.length) {
+                  return ListCard(
+                    // obj: lists[index],
+                    index: index,
+                    onTab: () {
+                      // context.read<TaskBloc>().state.listIndex = index;
+                      // context.read<TaskBloc>().state.list = lists[index];
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TaskPage(
+                                    listObj: lists[index],
+                                    listIndex: index,
+                                  )));
+                    },
+                  );
+                } else {
+                  return const SizedBox(height: 80);
+                }
+              },
+            ),
+          );
+        } else {
+          return const Center(child: Text("You don't have any list!"));
+        }
+      } else {
+        return const Center(
+            child: CircularProgressIndicator(color: Colors.orange));
+      }
+    });
   }
 
   // Future<void> _refresh() => listDo.fillLists().then((value) => true);
-  Future<void> _refresh() {return Future.value(true);}
+  Future<void> _refresh() {
+    return context.read<ListBloc>().readList().then((value) => true);
+
+    // return Future.value(true);
+  }
 }

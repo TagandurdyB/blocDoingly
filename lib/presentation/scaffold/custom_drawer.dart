@@ -75,17 +75,16 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
             Divider(color: dviderCol),
-            buildTitle("TASKS"),
-            Divider(color: dviderCol),
-            buildDTBtn(
-              "All Tasks",
-              Icons.task_sharp,
-              Icons.home,
-              false,
-              onTap: (){}
-              // onTap: () => Navigator.push(context,
-              //     MaterialPageRoute(builder: (context) => const TaskPage())),
-            ),
+            // buildTitle("TASKS"),
+            // Divider(color: dviderCol),
+            // buildDTBtn(
+            //   "All Tasks",
+            //   Icons.task_sharp,
+            //   Icons.home,
+            //   false,
+            //   onTap: () => Navigator.push(context,
+            //       MaterialPageRoute(builder: (context) =>  TaskPage())),
+            // ),
           ],
         );
       },

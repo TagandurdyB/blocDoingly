@@ -40,7 +40,7 @@ void init(){
 
   void get tongleSystem {
     try {
-      changeSystem(state.isSystem);
+      changeSystem(!state.isSystem);
     } catch (err) {
       throw ("Error on data Theme Provider tongleSystem:$err");
     }
@@ -63,7 +63,7 @@ void init(){
 
   void get tongleLight {
     try {
-      changeLight(state.isLight);
+      changeLight(!state.isLight);
     } catch (err) {
       throw ("Error on data Theme Provider tongleMode:$err");
     }
