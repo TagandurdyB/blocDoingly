@@ -7,12 +7,29 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'config/services/my_orientation.dart';
 import 'config/tags.dart';
+import 'data/models/list_model.dart';
+import 'data/models/task_model.dart';
 import 'injector.dart';
 import 'presentation/theme/my_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+//Register HiveModes=========================
+  Hive.registerAdapter(ListModelAdapter());
+  Hive.registerAdapter(TaskModelAdapter());
+//HiveModes==================================
+//List==
+  await Hive.openBox<ListModel>(Tags.hiveList);
+  // await Hive.openBox<ListModel>(Tags.hiveListAdd);
+  // await Hive.openBox<ListModel>(Tags.hiveListEdit);
+  await Hive.openBox<ListModel>(Tags.hiveListDelete);
+//Task==
+  await Hive.openBox<List<TaskModel>>(Tags.hiveTask);
+  // await Hive.openBox<TaskModel>(Tags.hiveTaskAdd);
+  // await Hive.openBox<TaskModel>(Tags.hiveTaskEdit);
+  await Hive.openBox<List<TaskModel>>(Tags.hiveTaskDelete);
+//===========================================
   await Hive.openBox(Tags.hiveBase);
   MyOrientation.systemUiOverlayStyle();
   runApp(const Injector(MyApp()));

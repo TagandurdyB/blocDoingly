@@ -47,7 +47,9 @@ class _TaskPageState extends State<TaskPage> {
   Future<void> _fillTask() async {
     if (widget.listObj != null) {
       // taskDo.fillTaskByList(widget.listObj!.uuid);
-      context.read<TaskBloc>().readTask(widget.listObj!.uuid);
+      context
+          .read<TaskBloc>()
+          .readTask(widget.listObj!.uuid, widget.listIndex!);
     } else {
       context.read<TaskBloc>().readAll();
     }
@@ -56,7 +58,6 @@ class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
     // taskP = TaskP.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Tasks"),
@@ -65,11 +66,22 @@ class _TaskPageState extends State<TaskPage> {
           IconButton(onPressed: _logOut, icon: const Icon(Icons.logout))
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => _fillTask(),
-        color: Colors.orange,
-        child: buildView(),
-      ),
+      body: BlocBuilder<TaskBloc, TaskState>(builder: (context, state) {
+        if (state is TaskUpdate) {
+          if (state.tasks.isNotEmpty) {
+            return RefreshIndicator(
+              onRefresh: () => _fillTask(),
+              color: Colors.orange,
+              child: buildView(),
+            );
+          } else {
+            return const Center(child: Text("You don't have any task!"));
+          }
+        } else {
+          return const Center(
+              child: CircularProgressIndicator(color: Colors.orange));
+        }
+      }),
       floatingActionButton: widget.listObj != null
           ? FloatingActionButton(
               onPressed: _addList, child: const Icon(Icons.add))

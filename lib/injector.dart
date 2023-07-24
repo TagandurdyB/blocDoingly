@@ -35,6 +35,7 @@ class Injector extends StatelessWidget {
         // BlocProvider<UserListBloc>(create: (context) => UserListBloc()),
         BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()..init()),
         BlocProvider<InternetCubit>(
+            lazy: false,
             create: (context) => InternetCubit(conectivity: Connectivity())),
         BlocProvider<ListBloc>(
             create: (context) => ListBloc(

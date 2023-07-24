@@ -2,16 +2,30 @@ import 'dart:convert';
 
 import 'list_model.dart';
 
-class TaskModel {
+import 'package:hive/hive.dart';
+part 'task_model.g.dart';
+
+@HiveType(typeId: 2)
+class TaskModel extends HiveObject {
+  @HiveField(0)
   final String name;
+  @HiveField(1)
   final String uuid;
+  @HiveField(2)
   final bool completed;
+  @HiveField(3)
   final ListModel? list;
+  @HiveField(4)
+  final bool isConnect;
+  @HiveField(5)
+  final bool isEdit;
 
   TaskModel({
     required this.name,
     required this.uuid,
     required this.completed,
+    this.isConnect = false,
+    this.isEdit = false,
     this.list,
   });
 
@@ -19,12 +33,16 @@ class TaskModel {
     String? name,
     String? uuid,
     bool? completed,
+    bool? isConnect,
+    bool? isEdit,
     ListModel? list,
   }) {
     return TaskModel(
       name: name ?? this.name,
       uuid: uuid ?? this.uuid,
       completed: completed ?? this.completed,
+      isConnect: isConnect ?? this.isConnect,
+      isEdit: isEdit ?? this.isEdit,
       list: list ?? this.list,
     );
   }
@@ -42,6 +60,7 @@ class TaskModel {
       name: map['text'] ?? '',
       uuid: map['uuid'] ?? '',
       completed: map['completed'] ?? false,
+      isConnect: true,
       list: map['List'] != null ? ListModel.fromMap(map['List']) : null,
     );
   }
@@ -72,7 +91,7 @@ class TaskModel {
 
   @override
   String toString() {
-    return 'TaskModel(name: $name, uuid: $uuid, completed: $completed, list: $list)';
+    return 'TaskModel(name: $name, uuid: $uuid, completed: $completed, list: $list, isConnect: $isConnect, isEdit: $isEdit )';
   }
 
   @override
@@ -83,6 +102,8 @@ class TaskModel {
         other.name == name &&
         other.uuid == uuid &&
         other.completed == completed &&
+        other.isConnect == isConnect &&
+        other.isEdit == isEdit &&
         other.list == list;
   }
 

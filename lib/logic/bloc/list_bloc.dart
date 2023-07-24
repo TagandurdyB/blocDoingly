@@ -2,35 +2,64 @@
 
 import 'package:bloc/bloc.dart';
 
+import '../../config/hive_boxes.dart';
 import '../../data/models/list_model.dart';
 import '../../data/models/response_model.dart';
 import '../../data/repositories/list_repository.dart';
+import '../cubit/internet_cubit.dart';
 
 part 'list_event.dart';
 part 'list_state.dart';
 
 class ListBloc extends Bloc<ListEvent, ListState> {
+  final InternetCubit internet;
   final ListRepository repository;
-  // final 
-  ListBloc(this.repository) : super(ListInitial(lists: const [])) {
+  // final
+  ListBloc(this.internet, this.repository)
+      : super(ListInitial(lists: const [])) {
     // on<ReadList>(_readList);
     // on<DeleteList>(_deleteList);
     // on<UpdateList>(_updateList);
   }
 
+  final box = Boxes.hiveLists();
+  // final boxAdd = Boxes.hiveListsAdd();
+  // final boxEdit = Boxes.hiveListsEdit();
+  final boxDelete = Boxes.hiveListsDelete();
+
   Future<ResponseModel> addList(AddList event) async {
-    final either = await repository.create(event.name);
-    if (either.isRight) {
-      state.lists.add(either.right);
-      emit(ListUpdate(lists: state.lists));
-      return ResponseModel(status: true, message: "Success");
+    if (internet.state is InternetConnected) {
+      final either = await repository.create(event.name);
+      if (either.isRight) {
+        state.lists.add(either.right);
+        emit(ListUpdate(lists: state.lists));
+        return ResponseModel(status: true, message: "Success");
+      } else {
+        return either.left;
+      }
     } else {
-      return either.left;
+      Boxes.changeMigrate(true);
+      final model = ListModel(name: event.name, uuid: "", isConnect: false);
+      box.add(model);
+      // boxAdd.add(model.copyWith());
+      state.lists.add(model);
+      // state.lists = box.values.toList();
+      emit(ListUpdate(lists: state.lists));
+      return ResponseModel(status: true, message: "List Added Local base!");
     }
   }
 
   Future<void> readList() async {
-    state.lists = await repository.read();
+    if (internet.state is InternetConnected) {
+      print("Read from Internet");
+      state.lists = await repository.read();
+      for (int i = 0; i < state.lists.length; i++) {
+        box.put(i, state.lists[i]);
+      }
+    } else {
+      state.lists = box.values.toList();
+      print("Read from Hive");
+    }
     emit(ListUpdate(lists: state.lists));
   }
 
@@ -40,12 +69,23 @@ class ListBloc extends Bloc<ListEvent, ListState> {
   // }
 
   Future<ResponseModel> deleteList(DeleteList event) async {
-    final response = await repository.delete(event.list.uuid);
-    if (response.status) {
+    if (internet.state is InternetConnected) {
+      final response = await repository.delete(event.list.uuid);
+      if (response.status) {
+        state.lists.remove(event.list);
+        emit(ListUpdate(lists: state.lists));
+      }
+      return response;
+    } else {
+      // box.deleteAt(event.list);
+      boxDelete.add(event.list.copyWith());
+      event.list.delete();
       state.lists.remove(event.list);
+      // state.lists=box.values.toList();
       emit(ListUpdate(lists: state.lists));
+      return ResponseModel(
+          status: true, message: "List deleted from local base!");
     }
-    return response;
   }
 
   Future<void> updateListState(UpdateList event) async {
@@ -63,11 +103,21 @@ class ListBloc extends Bloc<ListEvent, ListState> {
   }
 
   Future<ResponseModel> updateList(UpdateList event) async {
-    final response = await repository.update(event.list);
-    if (response.status) {
+    if (internet.state is InternetConnected) {
+      final response = await repository.update(event.list);
+      if (response.status) {
+        updateListState(event);
+      }
+      box.putAt(event.index!, event.list);
+      return response;
+    } else {
+      event.list = event.list.copyWith(isConnect: false, isEdit: false);
+      box.putAt(event.index!, event.list);
+      // boxEdit.put(event.index!, event.list.copyWith());
       updateListState(event);
+      return ResponseModel(
+          status: true, message: "List Updated from local base!");
     }
-    return response;
   }
 
   //Tasks==================================================

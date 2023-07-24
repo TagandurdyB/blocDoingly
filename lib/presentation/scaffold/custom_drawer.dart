@@ -4,6 +4,9 @@ import 'package:doingly/logic/cubit/theme_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../config/hive_boxes.dart';
+import '../routes/rout.dart';
+
 // import '../pages/task_page.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -75,6 +78,22 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
             Divider(color: dviderCol),
+            buildTitle("RECYCLE BIN"),
+            Divider(color: dviderCol),
+            buildDTBtn(
+              "Deleted Lists   (${Boxes.hiveListsDelete().values.length})",
+              Icons.delete_outlined,
+              Icons.delete_outlined,
+              false,
+              onTap: () => Navigator.pushNamed(context, Rout.deletedLists),
+            ),
+            buildDTBtn(
+              "Deleted Tasks   (${Boxes.hiveTasksDelete().values.length})",
+              Icons.delete_outlined,
+              Icons.delete_outlined,
+              false,
+              onTap: () => Navigator.pushNamed(context, Rout.deletedTasks),
+            ),
             // buildTitle("TASKS"),
             // Divider(color: dviderCol),
             // buildDTBtn(

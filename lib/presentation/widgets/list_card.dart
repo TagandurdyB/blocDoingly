@@ -20,19 +20,28 @@ import 'ReadyInput/ready_input_base.dart';
 import 'my_pop_widget.dart';
 
 class ListCard extends StatelessWidget {
-  // final ListModel obj;
+  final ListModel obj;
   final int index;
   final Function? onTab;
+  final Function? onFirst;
+  final Function? onSecond;
   final double bRadius;
-  ListCard({required this.index, this.onTab, this.bRadius = 10, super.key});
+  final bool isReload;
+  ListCard(
+      {required this.obj,
+      required this.index,
+      this.onTab,
+      this.onFirst,
+      this.onSecond,
+      this.bRadius = 10,
+      this.isReload = false,
+      super.key});
 
   final double arentir = MySize.arentir;
   late BuildContext context;
 
-  late ListModel obj;
   @override
   Widget build(BuildContext context) {
-    obj = context.watch<ListBloc>().state.lists[index];
     this.context = context;
     return GestureDetector(
       onTap: () {
@@ -57,10 +66,22 @@ class ListCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Center(
-          child: Text(
-            obj.name,
-            style: TextStyle(fontSize: arentir * 0.05),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Center(
+                child: Text(
+                  obj.name,
+                  style: TextStyle(fontSize: arentir * 0.05),
+                ),
+              ),
+              Icon(
+                obj.isConnect ? Icons.wifi : Icons.wifi_off_sharp,
+                color: obj.isConnect ? Colors.green : Colors.orange,
+              ),
+            ],
           ),
         ),
         buildTaskCounter(),
@@ -135,19 +156,32 @@ class ListCard extends StatelessWidget {
 //Btns===================================================
   Widget buildBtns() {
     return Row(children: [
-      buildBtn(Icons.edit, "Edit", () {
-        MyPopUpp.popInput(
-          context,
-          "Edit List",
-          "Save",
-          startVal: obj.name,
-          hidden: "List name",
-          label: "List name",
-          onTap: () => _update(),
-        );
-      }, col: Colors.blue),
-      buildBtn(Icons.delete_forever, "Delet",
-          () => MyPopUpp.popWarning(context, _delete)),
+      buildBtn(isReload ? Icons.replay_outlined : Icons.edit,
+          isReload ? "Reload" : "Edit", () {
+        if (onFirst != null) {
+          onFirst!();
+        } else {
+          MyPopUpp.popInput(
+            context,
+            "Edit List",
+            "Save",
+            startVal: obj.name,
+            hidden: "List name",
+            label: "List name",
+            onTap: () => _update(),
+          );
+        }
+      }, col: isReload ? Colors.green : Colors.blue),
+      buildBtn(
+          Icons.delete_forever,
+          "Delet",
+          () => MyPopUpp.popWarning(context, () {
+                if (onSecond != null) {
+                  onSecond!();
+                } else {
+                  _delete();
+                }
+              })),
     ]);
   }
 
@@ -165,8 +199,10 @@ class ListCard extends StatelessWidget {
 
   void _delete() {
     MyPopUpp.popLoading(context);
-    context.read<ListBloc>().deleteList(DeleteList(list: obj, index: index)).then(
-        (response) => MyPopUpp.popMessage(
+    context
+        .read<ListBloc>()
+        .deleteList(DeleteList(list: obj, index: index))
+        .then((response) => MyPopUpp.popMessage(
             context, () {}, response.message, !response.status));
   }
 

@@ -20,7 +20,7 @@ class DeleteList extends ListEvent {
 }
 
 class UpdateList extends ListEvent {
-  final ListModel list;
+   ListModel list;
   final int? index;
   UpdateList({required this.list, this.index});
 }

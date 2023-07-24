@@ -2,9 +2,11 @@
 
 import 'package:doingly/logic/bloc/list_bloc.dart';
 import 'package:doingly/logic/bloc/task_bloc.dart';
+import 'package:doingly/logic/cubit/internet_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 
+import '../../config/hive_boxes.dart';
 import '../../config/services/keyboard.dart';
 import '../../config/tags.dart';
 import '../routes/rout.dart';
@@ -31,7 +33,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
+    if (Boxes.isMigrate == true) {
+      final internet = context.read<InternetCubit>();
+      if (internet.state is InternetConnected) {
+        internet.migrate();
+      }
+    }
     context.read<ListBloc>().readList();
   }
 
@@ -88,11 +95,12 @@ class _HomePageState extends State<HomePage> {
             color: Colors.orange,
             onRefresh: _refresh,
             child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
               itemCount: lists.length + 1,
               itemBuilder: (context, index) {
                 if (index < lists.length) {
                   return ListCard(
-                    // obj: lists[index],
+                    obj: lists[index],
                     index: index,
                     onTab: () {
                       // context.read<TaskBloc>().state.listIndex = index;

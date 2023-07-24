@@ -1,16 +1,27 @@
 import 'dart:convert';
+import 'package:hive/hive.dart';
+part 'list_model.g.dart';
 
-class ListModel {
+@HiveType(typeId: 0)
+class ListModel extends HiveObject {
+  @HiveField(0)
   final String name;
+  @HiveField(1)
   final String uuid;
+  @HiveField(2)
   final int taskCount;
+  @HiveField(3)
   final int completed;
+  @HiveField(4)
   final bool isConnect;
+  @HiveField(5)
+  final bool isEdit;
 
   ListModel({
     required this.name,
     required this.uuid,
     required this.isConnect,
+    this.isEdit = false,
     this.taskCount = 0,
     this.completed = 0,
   });
@@ -19,13 +30,15 @@ class ListModel {
     String? name,
     String? uuid,
     int? taskCount,
-    bool? isConnect,
     int? completed,
+    bool? isConnect,
+    bool? isEdit,
   }) {
     return ListModel(
       name: name ?? this.name,
       uuid: uuid ?? this.uuid,
       isConnect: isConnect ?? this.isConnect,
+      isEdit: isEdit ?? this.isEdit,
       taskCount: taskCount ?? this.taskCount,
       completed: completed ?? this.completed,
     );
@@ -68,7 +81,7 @@ class ListModel {
 
   @override
   String toString() {
-    return 'ListModel(name: $name, uuid: $uuid, taskCount: $taskCount, completed: $completed)';
+    return 'ListModel(name: $name, uuid: $uuid, taskCount: $taskCount, completed: $completed, isConnect: $isConnect, isEdit: $isEdit)';
   }
 
   @override
@@ -78,6 +91,8 @@ class ListModel {
     return other is ListModel &&
         other.name == name &&
         other.uuid == uuid &&
+        other.isConnect == isConnect &&
+        other.isEdit == isEdit &&
         other.taskCount == taskCount &&
         other.completed == completed;
   }
