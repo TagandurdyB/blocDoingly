@@ -30,7 +30,6 @@ class DeletedListPage extends StatelessWidget {
           final list = box.values.toList();
           if (list.isNotEmpty) {
             return ListView.builder(
-              // children: List,
               itemCount: list.length + 1,
               itemBuilder: (context, index) {
                 if (index < list.length) {

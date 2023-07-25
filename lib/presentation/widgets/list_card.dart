@@ -7,12 +7,7 @@ import '../../config/tags.dart';
 import '../../data/models/list_model.dart';
 import '../theme/colors.dart';
 import '../theme/shadows.dart';
-// import '/presentation/views/widgets/my_pop_widget.dart';
 
-// import '../../../config/themes/colors.dart';
-// import '../../../config/themes/shadows.dart';
-// import '../../../config/vars/constants.dart';
-// import '../../providers/list_provider.dart';
 import '/config/services/my_size.dart';
 import 'package:flutter/material.dart';
 
@@ -77,10 +72,17 @@ class ListCard extends StatelessWidget {
                   style: TextStyle(fontSize: arentir * 0.05),
                 ),
               ),
-              Icon(
-                obj.isConnect ? Icons.wifi : Icons.wifi_off_sharp,
-                color: obj.isConnect ? Colors.green : Colors.orange,
-              ),
+                     Row(
+           children: [
+             Icon(obj.isEdit ? Icons.edit : Icons.add,
+                color: obj.isEdit ? Colors.blue : Colors.green),
+                 const SizedBox(width: 10),
+            Icon(obj.isConnect ? Icons.wifi : Icons.wifi_off_sharp,
+                color: obj.isConnect ? Colors.green : Colors.orange),
+               
+            
+           ],
+         ),
             ],
           ),
         ),

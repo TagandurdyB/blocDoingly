@@ -42,12 +42,14 @@ class CustomDrawer extends StatelessWidget {
   }
 
   Widget buildContent() {
-    // // final themeP = ThemeP.of(context);
-    // final themeP = context.watch<ThemeCubit>().state;
-    // // final themeDo = ThemeP.of(context, listen: false);
-    // final themeDo = context.read<ThemeCubit>();
     final bool isLight = Theme.of(context).brightness == Brightness.dark;
     final Color dviderCol = isLight ? Colors.black : Colors.white;
+
+    int deletedTaskCount = 0;
+    for (int i = 0; i < Boxes.hiveTasksDelete().values.length; i++) {
+      deletedTaskCount += Boxes.hiveTasksDelete().values.toList()[i].length;
+    }
+
     return BlocBuilder<ThemeCubit, ThemeState>(
       builder: (context, state) {
         return Column(
@@ -88,22 +90,12 @@ class CustomDrawer extends StatelessWidget {
               onTap: () => Navigator.pushNamed(context, Rout.deletedLists),
             ),
             buildDTBtn(
-              "Deleted Tasks   (${Boxes.hiveTasksDelete().values.length})",
+              "Deleted Tasks   ($deletedTaskCount)",
               Icons.delete_outlined,
               Icons.delete_outlined,
               false,
               onTap: () => Navigator.pushNamed(context, Rout.deletedTasks),
             ),
-            // buildTitle("TASKS"),
-            // Divider(color: dviderCol),
-            // buildDTBtn(
-            //   "All Tasks",
-            //   Icons.task_sharp,
-            //   Icons.home,
-            //   false,
-            //   onTap: () => Navigator.push(context,
-            //       MaterialPageRoute(builder: (context) =>  TaskPage())),
-            // ),
           ],
         );
       },

@@ -5,6 +5,7 @@ import 'package:doingly/logic/bloc/task_bloc.dart';
 import 'package:doingly/logic/cubit/internet_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:http/http.dart';
 
 import '../../config/hive_boxes.dart';
 import '../../config/services/keyboard.dart';
@@ -45,18 +46,45 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // listP = ListP.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Lists"),
-        centerTitle: true,
-        actions: [
-          IconButton(onPressed: _logOut, icon: const Icon(Icons.logout))
-        ],
+    return BlocListener<InternetCubit, InternetState>(
+      listener: (context, state) {
+        if (Boxes.isMigrate == true) {
+          if (state is InternetConnected) {
+            // MyPopUpp.popLoading(context);
+            final hiveDeleteList = Boxes.hiveListsDelete().values.toList();
+            for (int i = 0; i < hiveDeleteList.length; i++) {
+              if (hiveDeleteList[i].isConnect) {
+                context
+                    .read<ListBloc>()
+                    .deleteList(DeleteList(list: hiveDeleteList[i]));
+              }
+            }
+            //========
+            final hiveDeleteTask = Boxes.hiveTasksDelete().values.toList();
+            for (int i = 0; i < hiveDeleteTask.length; i++) {
+              for (int j = 0; i < hiveDeleteTask[i].length; j++) {
+                if (hiveDeleteTask[i][j].isConnect) {
+                  context.read<TaskBloc>().deleteTask(
+                      DeleteTask(task: hiveDeleteTask[i][j], listIndex: i));
+                }
+              }
+            }
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Lists"),
+          centerTitle: true,
+          actions: [
+            IconButton(onPressed: _logOut, icon: const Icon(Icons.logout))
+          ],
+        ),
+        drawer: CustomDrawer(),
+        body: buildContent(),
+        floatingActionButton: FloatingActionButton(
+            onPressed: _addList, child: const Icon(Icons.add)),
       ),
-      drawer: CustomDrawer(),
-      body: buildContent(),
-      floatingActionButton: FloatingActionButton(
-          onPressed: _addList, child: const Icon(Icons.add)),
     );
   }
 
@@ -103,8 +131,6 @@ class _HomePageState extends State<HomePage> {
                     obj: lists[index],
                     index: index,
                     onTab: () {
-                      // context.read<TaskBloc>().state.listIndex = index;
-                      // context.read<TaskBloc>().state.list = lists[index];
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -130,10 +156,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // Future<void> _refresh() => listDo.fillLists().then((value) => true);
   Future<void> _refresh() {
     return context.read<ListBloc>().readList().then((value) => true);
-
-    // return Future.value(true);
   }
 }

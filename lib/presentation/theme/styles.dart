@@ -1,7 +1,8 @@
 // ignore_for_file: overridden_fields
 
-import 'shadows.dart';
 import 'package:flutter/material.dart';
+
+import 'shadows.dart';
 
 class StylesLight {
   TextStyle appBar = const TextStyle(
@@ -18,7 +19,6 @@ class StylesLight {
   }
 
   TextStyle site(double size) => _site(size);
-  // TextStyle get siteSub => _site(Nums.siteSub);
 }
 
 class StylesDark extends StylesLight {

@@ -6,7 +6,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../config/hive_boxes.dart';
 import '../../config/tags.dart';
-import '../../data/models/task_model.dart';
 import '../routes/rout.dart';
 
 class DeletedTaskPage extends StatelessWidget {
@@ -24,7 +23,7 @@ class DeletedTaskPage extends StatelessWidget {
           IconButton(onPressed: _logOut, icon: const Icon(Icons.logout))
         ],
       ),
-      body: ValueListenableBuilder<Box<List<TaskModel>>>(
+      body: ValueListenableBuilder<Box<List>>(
         valueListenable: Boxes.hiveTasksDelete().listenable(),
         builder: (context, box, _) {
           final lists = box.values.toList();
@@ -33,33 +32,25 @@ class DeletedTaskPage extends StatelessWidget {
             return ListView.separated(
               separatorBuilder: (context, index) =>
                   const Divider(color: Colors.orange),
-              // children: List,
               itemCount: keys.length + 1,
               itemBuilder: (context, indexK) {
                 if (indexK < keys.length) {
                   return Column(
                     children: List.generate(lists[indexK].length, (index) {
                       return TaskCard(
-                        // isReload: true,
+                        isReload: true,
                         obj: lists[indexK][index],
                         listIndex: keys[indexK],
                         index: index,
-                        onTab: () {
-                          // box.values.toList()[index].delete();
+                        onTab: () {},
+                        onFirst: () {},
+                        onSecond: () {
+                          var hiveDeleted = box.get(keys[indexK])!;
+                          hiveDeleted.remove(lists[indexK][index]);
+                          box.put(keys[indexK], hiveDeleted);
                         },
                       );
                     }),
-                    // children: [
-                    //   TaskCard(
-                    //     // isReload: true,
-                    //     obj: lists[index],
-                    //     listIndex: ,
-                    //     index: index,
-                    //     onTab: () {
-                    //       // box.values.toList()[index].delete();
-                    //     },
-                    //   ),
-                    // ],
                   );
                 } else {
                   return const SizedBox(height: 70);

@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../config/counts.dart';
-import '../../config/hive_boxes.dart';
+
 // import '/config/constants/enums.dart';
 
 part 'internet_state.dart';
@@ -33,9 +34,7 @@ class InternetCubit extends Cubit<InternetState> {
   void internetDisconnected() => emit(InternetDisconnected());
 
   void migrate(){
-    // for(int i=0;i<Boxes.hiveListsAdd().values.length;i++){
-
-    // }
+    //TODO:
   }
 
   @override

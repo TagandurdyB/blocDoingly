@@ -1,11 +1,9 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:doingly/config/services/tost_service.dart';
 import 'package:doingly/data/models/user_model.dart';
 import 'package:doingly/data/repositories/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 
 import '../../../config/services/keyboard.dart';
 import '../../config/tags.dart';
@@ -25,10 +23,6 @@ class RegisterPage extends StatelessWidget {
     this.context = context;
     return WillPopScope(
       onWillPop: () async {
-        // final themeP = ThemeP.of(context, listen: false);
-        // if (themeP.isLoding) {
-        //   themeP.changeIsLoading(false);
-        // }
         return true;
       },
       child: Scaffold(
@@ -112,17 +106,6 @@ class RegisterPage extends StatelessWidget {
         Navigator.popAndPushNamed(context, Rout.home);
       }, response.message, !response.status);
     });
-    // UserP.of(context, listen: false)
-    //     .signUp(UserEntity(
-    //   name: RIBase.getText(Tags.rIUserName),
-    //   pass: RIBase.getText(Tags.rIPass),
-    //   email: RIBase.getText(Tags.rIEmail),
-    // ))
-    //     .then((response) {
-    //   MyPopUpp.popMessage(context, () {
-    //     Navigator.popAndPushNamed(context, Rout.home);
-    //   }, response.message, !response.status);
-    // });
   }
 
   Widget buildSign() {

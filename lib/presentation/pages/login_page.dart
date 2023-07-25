@@ -89,21 +89,6 @@ class LoginPage extends StatelessWidget {
         Navigator.popAndPushNamed(context, Rout.home);
       }, response.message, !response.status);
     });
-    // UserP.of(context, listen: false)
-    //     .login(UserEntity(
-    //   name: RIBase.getText(Tags.rIUserName),
-    //   pass: RIBase.getText(Tags.rIPass),
-    // ))
-    //     .then((response) {
-    //   MyPopUpp.popMessage(context, () {
-    //     Navigator.popAndPushNamed(context, Rout.home);
-    //   }, response.message, !response.status);
-    //   // TostService.message(response.message, response.status);
-    //   // if (response.status) {
-    //   //   Future.delayed(const Duration(seconds: 3))
-    //   //       .then((value) => Navigator.popAndPushNamed(context, Rout.home));
-    //   // }
-    // });
   }
 
   Widget buildSign() {

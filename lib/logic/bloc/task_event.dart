@@ -34,7 +34,7 @@ class DeleteTask extends TaskEvent {
 }
 
 class UpdateTask extends TaskEvent {
-  final TaskModel task;
+   TaskModel task;
   // final ListModel list;
   final int? listIndex;
   final int? index;

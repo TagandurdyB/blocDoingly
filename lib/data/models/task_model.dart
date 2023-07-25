@@ -1,8 +1,9 @@
 import 'dart:convert';
 
+import 'package:hive/hive.dart';
+
 import 'list_model.dart';
 
-import 'package:hive/hive.dart';
 part 'task_model.g.dart';
 
 @HiveType(typeId: 2)
@@ -13,11 +14,11 @@ class TaskModel extends HiveObject {
   final String uuid;
   @HiveField(2)
   final bool completed;
-  @HiveField(3)
+  @HiveField(7)
   final ListModel? list;
-  @HiveField(4)
+  @HiveField(8)
   final bool isConnect;
-  @HiveField(5)
+  @HiveField(9)
   final bool isEdit;
 
   TaskModel({

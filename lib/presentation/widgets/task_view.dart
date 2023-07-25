@@ -30,10 +30,8 @@ class TaskView extends StatelessWidget {
       children: List.generate(objs.length + 2, (index) {
         if (index != 0 && index - 1 < objs.length) {
           return TaskCard(
-            // obj: objs[index - 1],
             obj: objs[index - 1],
             index: index - 1,
-            // listObj: listObj,
             listIndex: listIndex,
             onTab: cardFunc,
           );

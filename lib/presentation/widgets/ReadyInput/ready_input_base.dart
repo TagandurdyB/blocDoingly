@@ -2,12 +2,6 @@
 
 import 'package:flutter/cupertino.dart';
 
-/*class RIEl {
-  final int index;
-  final TextEditingController controler;
-  RIEl({this.index, this.controler});
-}*/
-
 Map<String, TextEditingController> ReadyInputBase = {};
 
 class RIBase {

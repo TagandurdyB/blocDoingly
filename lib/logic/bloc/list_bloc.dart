@@ -23,8 +23,6 @@ class ListBloc extends Bloc<ListEvent, ListState> {
   }
 
   final box = Boxes.hiveLists();
-  // final boxAdd = Boxes.hiveListsAdd();
-  // final boxEdit = Boxes.hiveListsEdit();
   final boxDelete = Boxes.hiveListsDelete();
 
   Future<ResponseModel> addList(AddList event) async {
@@ -41,9 +39,7 @@ class ListBloc extends Bloc<ListEvent, ListState> {
       Boxes.changeMigrate(true);
       final model = ListModel(name: event.name, uuid: "", isConnect: false);
       box.add(model);
-      // boxAdd.add(model.copyWith());
       state.lists.add(model);
-      // state.lists = box.values.toList();
       emit(ListUpdate(lists: state.lists));
       return ResponseModel(status: true, message: "List Added Local base!");
     }
@@ -63,28 +59,31 @@ class ListBloc extends Bloc<ListEvent, ListState> {
     emit(ListUpdate(lists: state.lists));
   }
 
-  // Future<void> readList(ReadList event, Emitter<ListState> emit) async {
-  //   state.lists = await repository.read();
-  //   emit(ListUpdate(lists: state.lists));
-  // }
 
   Future<ResponseModel> deleteList(DeleteList event) async {
     if (internet.state is InternetConnected) {
       final response = await repository.delete(event.list.uuid);
       if (response.status) {
+        boxDelete.add(event.list.copyWith());
         state.lists.remove(event.list);
         emit(ListUpdate(lists: state.lists));
       }
       return response;
     } else {
       // box.deleteAt(event.list);
-      boxDelete.add(event.list.copyWith());
-      event.list.delete();
-      state.lists.remove(event.list);
-      // state.lists=box.values.toList();
-      emit(ListUpdate(lists: state.lists));
-      return ResponseModel(
-          status: true, message: "List deleted from local base!");
+      if (event.list.taskCount == 0) {
+        boxDelete.add(event.list.copyWith());
+        event.list.delete();
+        state.lists.remove(event.list);
+        // state.lists=box.values.toList();
+        emit(ListUpdate(lists: state.lists));
+        return ResponseModel(
+            status: true, message: "List deleted from local base!");
+      } else {
+        return ResponseModel(
+            status: true,
+            message: "List can not deleted! Because there is a task in it.");
+      }
     }
   }
 
@@ -111,9 +110,8 @@ class ListBloc extends Bloc<ListEvent, ListState> {
       box.putAt(event.index!, event.list);
       return response;
     } else {
-      event.list = event.list.copyWith(isConnect: false, isEdit: false);
+      event.list = event.list.copyWith(isConnect: false, isEdit: true);
       box.putAt(event.index!, event.list);
-      // boxEdit.put(event.index!, event.list.copyWith());
       updateListState(event);
       return ResponseModel(
           status: true, message: "List Updated from local base!");
@@ -124,18 +122,21 @@ class ListBloc extends Bloc<ListEvent, ListState> {
   void incrementTask(int i) {
     state.lists[i] =
         state.lists[i].copyWith(taskCount: state.lists[i].taskCount + 1);
+    box.put(i, state.lists[i]);
     emit(ListUpdate(lists: state.lists));
   }
 
   void decrementTask(int i) {
     state.lists[i] =
         state.lists[i].copyWith(taskCount: state.lists[i].taskCount - 1);
+    box.put(i, state.lists[i]);
     emit(ListUpdate(lists: state.lists));
   }
 
   void updateComplated(int i, bool isCheck) {
     state.lists[i] = state.lists[i]
         .copyWith(completed: state.lists[i].completed + (isCheck ? 1 : -1));
+    box.put(i, state.lists[i]);
     emit(ListUpdate(lists: state.lists));
   }
 }

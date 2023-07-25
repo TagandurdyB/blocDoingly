@@ -1,4 +1,4 @@
-import 'package:doingly/config/tags.dart';
+import 'tags.dart';
 import 'package:hive/hive.dart';
 
 import '../data/models/list_model.dart';
@@ -12,14 +12,14 @@ class Boxes {
   static Box<ListModel> hiveListsDelete() =>
       Hive.box<ListModel>(Tags.hiveListDelete);
 
-  static Box<List<TaskModel>> hiveTasks() =>
-      Hive.box<List<TaskModel>>(Tags.hiveTask);
+  static Box<List> hiveTasks() =>
+      Hive.box<List>(Tags.hiveTask);
   // static Box<TaskModel> hiveTasksAdd() =>
   //     Hive.box<TaskModel>(Tags.hiveTaskAdd);
   // static Box<TaskModel> hiveTasksEdit() =>
   //     Hive.box<TaskModel>(Tags.hiveListEdit);
-  static Box<List<TaskModel>> hiveTasksDelete() =>
-      Hive.box<List<TaskModel>>(Tags.hiveTaskDelete);
+  static Box<List> hiveTasksDelete() =>
+      Hive.box<List>(Tags.hiveTaskDelete);
 
   static Box base() => Hive.box(Tags.hiveBase);
   static bool? get isMigrate => base().get(Tags.hiveIsMigrate);

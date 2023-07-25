@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:doingly/data/data_providers/remote/task_remote_datasource.dart';
 import 'package:either_dart/either.dart';
 
 import '../../config/services/tost_service.dart';
 import '../data_providers/remote/http_vars.dart';
+import '../data_providers/remote/task_remote_datasource.dart';
 import '../models/response_model.dart';
 import '../models/task_model.dart';
 

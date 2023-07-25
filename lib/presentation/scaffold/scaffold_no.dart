@@ -17,7 +17,6 @@ class ScaffoldNo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor ?? Theme.of(context).canvasColor,
-      //resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(0),
         child: AppBar(elevation: 0),

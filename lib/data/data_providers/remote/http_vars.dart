@@ -1,7 +1,7 @@
 import 'package:either_dart/either.dart';
 
-import '../../../config/errors/error_messages.dart';
 import '/data/models/response_model.dart';
+import '../../../config/errors/error_messages.dart';
 
 class Uris {
 //Domain========================================================================

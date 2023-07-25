@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:doingly/config/services/tost_service.dart';
-import 'package:doingly/data/models/list_model.dart';
-import 'package:doingly/data/models/response_model.dart';
+import '../../config/services/tost_service.dart';
+import '../models/list_model.dart';
+import '../models/response_model.dart';
 import 'package:either_dart/either.dart';
 
 import '../data_providers/remote/http_vars.dart';

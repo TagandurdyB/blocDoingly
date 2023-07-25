@@ -3,13 +3,8 @@
 import 'package:doingly/logic/bloc/task_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// import '../../../config/vars/constants.dart';
-// import '/domain/entities/list_entity.dart';
 
 import '../../../config/services/my_size.dart';
-// import '../../../config/themes/shadows.dart';
-// import '../../providers/task_provider.dart';
-// import '/domain/entities/task_entity.dart';
 import 'package:flutter/material.dart';
 
 import '../../config/tags.dart';
@@ -22,60 +17,42 @@ class TaskCard extends StatelessWidget {
   final TaskModel obj;
   final int index;
   final int listIndex;
-  // final ListModel listObj;
+  final bool isReload;
   final Function? onTab;
+  final Function? onFirst;
+  final Function? onSecond;
   TaskCard({
     required this.obj,
     required this.index,
     required this.listIndex,
-    // required this.listObj,
+    this.isReload = false,
     this.onTab,
+    this.onFirst,
+    this.onSecond,
     super.key,
   });
 
   final double arentir = MySize.arentir;
   late BuildContext context;
-  // late TaskP taskP, taskDo;
 
-  // late TaskModel obj;
   @override
   Widget build(BuildContext context) {
-    // if(index){
-    // obj = context.watch<TaskBloc>().state.tasks[index];
-    // }else if(){
-    // obj = context.watch<TaskBloc>().state.tasksAll[index];
-
-    // }
     this.context = context;
-    // taskP = TaskP.of(context);
-    // taskDo = TaskP.of(context, listen: false);
+
     return GestureDetector(
       onTap: () {
-        // taskDo
-        //     .update(
-        //         obj.uuid,
-        //         TaskModel(
-        //             name: obj.name,
-        //             uuid: listObj.uuid,
-        //             completed: !obj.completed))
-        //     .then((response) {
-        //   TostService.message(response.message, response.status);
-        // if (onTab != null) onTab!();
-
-        // });
-
-        context.read<TaskBloc>().updateTask(UpdateTask(
-            task: obj.copyWith(completed: !obj.completed),
-            // list: listObj,
-            listIndex: listIndex,
-            index: index));
+        if (onTab != null) {
+          onTab!();
+        } else {
+          context.read<TaskBloc>().updateTask(UpdateTask(
+              task: obj.copyWith(completed: !obj.completed),
+              // list: listObj,
+              listIndex: listIndex,
+              index: index));
+        }
       },
-      // onLongPress: (){
-
-      // },
       child: Container(
         clipBehavior: Clip.hardEdge,
-        // height: arentir * 0.2,
         margin: const EdgeInsets.all(20),
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
@@ -120,32 +97,53 @@ class TaskCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-         Icon(obj.isConnect ? Icons.wifi : Icons.wifi_off_sharp,
-            color: obj.isConnect ? Colors.green : Colors.orange),
+        Row(
+          children: [
+            Icon(obj.isEdit ? Icons.edit : Icons.add,
+                color: obj.isEdit ? Colors.blue : Colors.green),
+            const SizedBox(width: 10),
+            Icon(obj.isConnect ? Icons.wifi : Icons.wifi_off_sharp,
+                color: obj.isConnect ? Colors.green : Colors.orange),
+          ],
+        ),
         Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(
-            obj.completed ? Icons.task_alt : Icons.check_box_outline_blank,
-            color: Colors.green,
-            size: arentir * 0.11,
+          Visibility(
+            visible: !isReload,
+            child: Icon(
+              obj.completed ? Icons.task_alt : Icons.check_box_outline_blank,
+              color: Colors.green,
+              size: arentir * 0.11,
+            ),
           ),
           const SizedBox(width: 10),
-          buildBtn(Icons.edit, () {
-            MyPopUpp.popInput(
-              context,
-              "Edit Task",
-              "Save",
-              startVal: obj.name,
-              hidden: "Task name",
-              label: "Task name",
-              onTap: () => _update(),
-              iconD: Icons.task_outlined,
-            );
-          }, col: Colors.blue),
+          Visibility(
+            visible: !isReload,
+            child: buildBtn(isReload ? Icons.replay_outlined : Icons.edit, () {
+              if (onFirst != null) {
+                onFirst!();
+              } else {
+                MyPopUpp.popInput(
+                  context,
+                  "Edit Task",
+                  "Save",
+                  startVal: obj.name,
+                  hidden: "Task name",
+                  label: "Task name",
+                  onTap: () => _update(),
+                  iconD: Icons.task_outlined,
+                );
+              }
+            }, col: isReload ? Colors.green[800]! : Colors.blue),
+          ),
           const SizedBox(width: 10),
-          buildBtn(Icons.delete_forever,
-              () => MyPopUpp.popWarning(context, _delete)),
+          buildBtn(Icons.delete_forever, () {
+            if (onSecond != null) {
+              onSecond!();
+            } else {
+              MyPopUpp.popWarning(context, _delete);
+            }
+          }),
         ]),
-       
       ],
     );
   }
@@ -169,7 +167,6 @@ class TaskCard extends StatelessWidget {
         .read<TaskBloc>()
         .deleteTask(DeleteTask(
           task: obj,
-          // list: listObj,
           listIndex: listIndex,
           index: index,
         ))

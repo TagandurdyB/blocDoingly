@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:http/http.dart';
-
-import '../../models/user_model.dart';
 import 'package:http/http.dart' as http;
 
+import '../../models/user_model.dart';
 import 'http_vars.dart';
 
 // abstract class UserRemoteDataSource {

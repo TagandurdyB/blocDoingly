@@ -38,15 +38,11 @@ class _TaskPageState extends State<TaskPage> {
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   taskDo = TaskP.of(context, listen: false);
     _fillTask();
-    // });
   }
 
   Future<void> _fillTask() async {
     if (widget.listObj != null) {
-      // taskDo.fillTaskByList(widget.listObj!.uuid);
       context
           .read<TaskBloc>()
           .readTask(widget.listObj!.uuid, widget.listIndex!);
@@ -57,7 +53,6 @@ class _TaskPageState extends State<TaskPage> {
 
   @override
   Widget build(BuildContext context) {
-    // taskP = TaskP.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Tasks"),
@@ -97,9 +92,6 @@ class _TaskPageState extends State<TaskPage> {
           objs: taskP.tasks,
           listObj: widget.listObj!,
           listIndex: widget.listIndex!,
-          cardFunc: () {
-            // taskDo.fillTaskByList(widget.listObj!.uuid);
-          },
         ),
       );
     } else if (taskP.tasksAll != null) {
@@ -113,17 +105,6 @@ class _TaskPageState extends State<TaskPage> {
               listIndex: index,
             );
           }),
-          // children: taskP.tasksAll!
-          //     .map((tasks) => TaskView(
-          //           objs: tasks,
-          //           listObj: tasks.first.list!,
-          //           listIndex: ,
-          //           cardFunc: () {
-          //             // TODO
-          //             // taskDo.fillAllTask();
-          //           },
-          //         ))
-          //     .toList(),
         ),
       );
     } else {
@@ -165,27 +146,5 @@ class _TaskPageState extends State<TaskPage> {
       label: "New Task name",
       iconD: Icons.task_outlined,
     );
-    // MyPopUpp.popInput(
-    //   context,
-    //   "Add Task",
-    //   "Add",
-    //   onTap: () {
-    //     Keyboard.close(context);
-    //     MyPopUpp.popLoading(context);
-    //     taskDo
-    //         .create(TaskEntity(
-    //             name: RIBase.getText(Tags.rIPop),
-    //             completed: false,
-    //             uuid: widget.listObj!.uuid))
-    //         .then((response) {
-    //       taskDo.fillTaskByList(widget.listObj!.uuid);
-    //       MyPopUpp.popMessage(
-    //           context, null, response.message, !response.status);
-    //     });
-    //   },
-    //   hidden: "New Task name",
-    //   label: "New Task name",
-    //   iconD: Icons.task_outlined,
-    // );
   }
 }

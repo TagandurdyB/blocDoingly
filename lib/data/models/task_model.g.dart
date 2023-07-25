@@ -20,9 +20,9 @@ class TaskModelAdapter extends TypeAdapter<TaskModel> {
       name: fields[0] as String,
       uuid: fields[1] as String,
       completed: fields[2] as bool,
-      isConnect: fields[4] as bool,
-      isEdit: fields[5] as bool,
-      list: fields[3] as ListModel?,
+      isConnect: fields[8] as bool,
+      isEdit: fields[9] as bool,
+      list: fields[7] as ListModel?,
     );
   }
 
@@ -36,11 +36,11 @@ class TaskModelAdapter extends TypeAdapter<TaskModel> {
       ..write(obj.uuid)
       ..writeByte(2)
       ..write(obj.completed)
-      ..writeByte(3)
+      ..writeByte(7)
       ..write(obj.list)
-      ..writeByte(4)
+      ..writeByte(8)
       ..write(obj.isConnect)
-      ..writeByte(5)
+      ..writeByte(9)
       ..write(obj.isEdit);
   }
 
